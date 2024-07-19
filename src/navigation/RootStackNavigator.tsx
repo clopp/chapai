@@ -13,17 +13,31 @@ import {StyleSheet} from 'react-native';
 import DiagnosticarScreen from '../screens/DiagnosticarScreen';
 import GotaScreen from '../screens/GotaScreen';
 import ParatriozaScreen from '../screens/ParatriozaScreen';
-import Ionicons from 'react-native-vector-icons/MaterialIcons';
+import IconComponent from '../components/IconComponent';
+import {COLORS} from '../theme';
 
 const HomeStack = createNativeStackNavigator<Routes>();
 
 function DiagnosticarStackScreen(): React.ReactElement {
   return (
     <GestureHandlerRootView style={styles.root}>
-      <HomeStack.Navigator>
-        <HomeStack.Screen name="Diagnosticos" component={DiagnosticarScreen} />
+      <HomeStack.Navigator
+        screenOptions={{
+          headerStyle: {backgroundColor: COLORS.primary.dark},
+          headerTitleStyle: {color: 'white'},
+          headerTintColor: COLORS.primary.actived,
+        }}>
+        <HomeStack.Screen
+          options={{headerShown: false}}
+          name="Diagnosticos"
+          component={DiagnosticarScreen}
+        />
         <HomeStack.Screen name="Gota" component={GotaScreen} />
-        <HomeStack.Screen name="Paratrioza" component={ParatriozaScreen} />
+        <HomeStack.Screen
+          name="Paratrioza"
+          component={ParatriozaScreen}
+          options={{headerShadowVisible: false}}
+        />
       </HomeStack.Navigator>
     </GestureHandlerRootView>
   );
@@ -32,7 +46,7 @@ function DiagnosticarStackScreen(): React.ReactElement {
 function HomeStackScreen(): React.ReactElement {
   return (
     <GestureHandlerRootView style={styles.root}>
-      <HomeStack.Navigator>
+      <HomeStack.Navigator screenOptions={{headerShown: false}}>
         <HomeStack.Screen name="Chapai" component={HomeScreen} />
         <HomeStack.Screen name="CameraScreen" component={CameraScreen} />
       </HomeStack.Navigator>
@@ -86,24 +100,24 @@ export default function RootStackNavigator() {
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName;
-
-            if (route.name === 'Home') {
-              iconName = focused ? 'leaf' : 'leaf';
-            } else if (route.name === 'Settings') {
-              iconName = focused ? 'ios-list' : 'ios-list-outline';
-            }
-
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
+          tabBarActiveTintColor: COLORS.primary.actived,
+          tabBarInactiveTintColor: COLORS.primary.dark,
+          headerShown: false,
+          tabBarShowLabel: false,
+          tabBarStyle: {
+            height: 60,
+            backgroundColor: COLORS.primary.normal,
           },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
+          tabBarIcon: ({...props}) => {
+            props.size = 30;
+            return (
+              <IconComponent name={route.name.toLocaleLowerCase()} {...props} />
+            );
+          },
         })}>
-        <Tab.Screen name="Inicio" component={HomeStackScreen} />
-        <Tab.Screen name="Camara" component={PermissionStackScreen} />
-        <Tab.Screen name="Diagnostico" component={DiagnosticarStackScreen} />
+        <Tab.Screen name="Home" component={HomeStackScreen} />
+        <Tab.Screen name="Camera" component={PermissionStackScreen} />
+        <Tab.Screen name="Diagnostic" component={DiagnosticarStackScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
