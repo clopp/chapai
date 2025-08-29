@@ -22,7 +22,7 @@ export default function PermissionScreen({
 
   useEffect(() => {
     if (cameraPermissionStatus === 'granted') {
-      navigation.replace('CameraScreen', {name: 'CameraScreen'});
+      navigation.replace('ScanScreen', {name: 'ScanScreen'});
     }
   }, [cameraPermissionStatus, navigation]);
 

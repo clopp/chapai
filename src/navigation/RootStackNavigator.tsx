@@ -15,6 +15,7 @@ import GotaScreen from '../screens/GotaScreen';
 import ParatriozaScreen from '../screens/ParatriozaScreen';
 import IconComponent from '../components/IconComponent';
 import {COLORS} from '../theme';
+import ScanScreen from '../screens/ScanScreen';
 
 const HomeStack = createNativeStackNavigator<Routes>();
 
@@ -48,7 +49,7 @@ function HomeStackScreen(): React.ReactElement {
     <GestureHandlerRootView style={styles.root}>
       <HomeStack.Navigator screenOptions={{headerShown: false}}>
         <HomeStack.Screen name="Chapai" component={HomeScreen} />
-        <HomeStack.Screen name="CameraScreen" component={CameraScreen} />
+        <HomeStack.Screen name="ScanScreen" component={ScanScreen} />
       </HomeStack.Navigator>
     </GestureHandlerRootView>
   );
