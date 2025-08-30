@@ -98,7 +98,7 @@ export default function App({navigation}: any) {
         classifyPicture(photo.path);
       }, 3000);
     } catch (e) {
-      console.log(e);
+      console.log('error de camara', e);
     }
   };
   useEffect(() => {
