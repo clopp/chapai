@@ -81,13 +81,13 @@ function PermissionStackScreen() {
           animationTypeForReplace: 'push',
         }}
         initialRouteName={
-          showPermissionsPage ? 'PermissionScreen' : 'CameraScreen'
+          showPermissionsPage ? 'PermissionScreen' : 'ScanScreen'
         }>
         <SettingsStack.Screen
           name="PermissionScreen"
           component={PermissionScreen}
         />
-        <SettingsStack.Screen name="CameraScreen" component={CameraScreen} />
+        <SettingsStack.Screen name="ScanScreen" component={ScanScreen} />
         <SettingsStack.Screen name="Gota" component={GotaScreen} />
       </SettingsStack.Navigator>
     </GestureHandlerRootView>
