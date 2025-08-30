@@ -16,8 +16,8 @@ export function useTFLite() {
       if (ready) {
         try {
           await TFLiteService.loadModel(
-            '/Model/plant-disease.tflite',
-            '/Model/plant-disease.txt',
+            '/Model/potato_classifier_paratrioza.tflite',
+            '/Model/labels.txt',
           );
           setIsModelLoaded(true);
         } catch (e) {

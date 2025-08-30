@@ -9,13 +9,10 @@ export async function prepareModelFiles() {
     if (!exists) {
       await RNFS.mkdir(MODEL_DIR);
       await RNFS.copyFileAssets(
-        'Model/plant-disease.tflite',
-        `${MODEL_DIR}/plant-disease.tflite`,
+        'Model/potato_classifier_paratrioza.tflite',
+        `${MODEL_DIR}/potato_classifier_paratrioza.tflite`,
       );
-      await RNFS.copyFileAssets(
-        'Model/plant-disease.txt',
-        `${MODEL_DIR}/plant-disease.txt`,
-      );
+      await RNFS.copyFileAssets('Model/labels.txt', `${MODEL_DIR}/labels.txt`);
     }
     return true;
   } catch (error) {
