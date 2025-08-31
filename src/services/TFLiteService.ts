@@ -1,6 +1,11 @@
 // src/services/TFLiteService.ts
 import {Tflite} from 'react-native-tflite-classification';
 
+export interface ClassificationResult {
+  label: string;
+  confidence: number;
+}
+
 class TFLiteService {
   private tflite: Tflite;
 
@@ -22,19 +27,27 @@ class TFLiteService {
     });
   }
 
-  classifyImage(path: string, numResults = 5, threshold = 0): Promise<any[]> {
+  classifyImage(
+    path: string,
+    numResults = 5,
+    threshold = 0,
+  ): Promise<ClassificationResult[]> {
     return new Promise((resolve, reject) => {
-      this.tflite.runModelOnImage({path, numResults, threshold}, (err, res) => {
-        if (err) {
-          console.error('❌ Error clasificando imagen:', err);
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
+      this.tflite.runModelOnImage(
+        {path, numResults, threshold},
+        (err: Error | null, res?: ClassificationResult[]) => {
+          if (err) {
+            console.error('❌ Error clasificando imagen:', err);
+            reject(err);
+          } else if (res) {
+            resolve(res);
+          } else {
+            reject(new Error('No se recibió resultado del modelo'));
+          }
+        },
+      );
     });
   }
-
   close() {
     this.tflite.close();
   }
