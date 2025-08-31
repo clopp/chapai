@@ -1,17 +1,13 @@
 // src/screens/ScanScreen.tsx
 import React, {useState} from 'react';
-import {
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Image, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {Camera} from 'react-native-vision-camera';
 import {useCameraHandler} from '../hooks/useCameraHandler';
 import {useTFLite} from '../hooks/useTFLite';
+import {useSplashProgress} from '../hooks/useSplashProgress';
 import ScanButton from '../components/ScanButton';
 import ResultCard from '../components/ResultCard';
+import {LoadingBar} from '../components/LoadingBar';
 import {COLORS} from '../theme';
 
 export default function ScanScreen({navigation}: any) {
@@ -20,26 +16,30 @@ export default function ScanScreen({navigation}: any) {
   const [photo, setPhoto] = useState<string>();
   const [isCapturing, setIsCapturing] = useState(false);
 
+  // hook sincronizado con el modelo
+  const {progress, done} = useSplashProgress(isModelLoaded);
+
+  // 📌 Caso 1: permisos denegados
   if (permission === 'denied') {
     return <Text>No tienes permisos de cámara</Text>;
   }
 
-  if (!isModelLoaded) {
+  // 📌 Caso 2: aún no está listo (loading + barra)
+  if (!done) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="white" />
-        <Text style={{color: 'white'}}>Cargando modelo...</Text>
+        <LoadingBar progress={progress} />
       </View>
     );
   }
-
+  // 📌 Captura de foto
   const takePhoto = async () => {
     if (!device || !camera.current) {
       console.warn('No se encontró cámara en el dispositivo');
       return;
     }
     try {
-      setIsCapturing(true); // 🚀 Bloqueamos la UI
+      setIsCapturing(true);
       const capture = await camera.current.takePhoto({flash: 'off'});
       const photoPath = `file://${capture.path}`;
       setPhoto(photoPath);
@@ -47,7 +47,7 @@ export default function ScanScreen({navigation}: any) {
     } catch (e) {
       console.error('Error al tomar foto:', e);
     } finally {
-      setIsCapturing(false); // ✅ Liberamos
+      setIsCapturing(false);
     }
   };
 
@@ -60,11 +60,18 @@ export default function ScanScreen({navigation}: any) {
       </Text>
 
       <View style={styles.cameraContainer}>
-        {photo ? (
-          <Image source={{uri: photo}} style={styles.previewImage} />
+        {/* 📌 Caso 3A: Vista de resultado */}
+        {photo && result ? (
+          <>
+            <Image source={{uri: photo}} style={styles.previewImage} />
+            <ResultCard
+              result={result}
+              onNavigate={() => navigation.navigate('Gota')}
+            />
+          </>
         ) : (
           <>
-            {/* Cámara dentro de un frame */}
+            {/* 📌 Cámara dentro de un frame */}
             <View style={styles.cameraFrame}>
               {device && (
                 <Camera
@@ -77,13 +84,13 @@ export default function ScanScreen({navigation}: any) {
               )}
             </View>
 
-            {/* Cuadrícula de escaneo */}
+            {/* 📌 Cuadrícula de escaneo */}
             <Image
               source={require('../assets/images/scan_square.png')}
               style={styles.scanSquare}
             />
 
-            {/* Overlay de "Capturando" */}
+            {/* 📌 Overlay de captura */}
             {isCapturing && (
               <View style={styles.capturingOverlay}>
                 <ActivityIndicator size="large" color="white" />
@@ -92,20 +99,12 @@ export default function ScanScreen({navigation}: any) {
                 </Text>
               </View>
             )}
+
+            {/* 📌 Botón de escaneo */}
+            {!isCapturing && <ScanButton onPress={takePhoto} />}
           </>
         )}
-
-        {/* Botón solo cuando no hay foto ni se está capturando */}
-        {!photo && !isCapturing && <ScanButton onPress={takePhoto} />}
       </View>
-
-      {/* Resultado */}
-      {photo && (
-        <ResultCard
-          result={result}
-          onNavigate={() => navigation.navigate('Gota')}
-        />
-      )}
     </View>
   );
 }
@@ -169,14 +168,6 @@ const styles = StyleSheet.create({
     height: '95%',
     borderRadius: 10,
   },
-  takePhotoButton: {
-    width: 100,
-    height: 100,
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    bottom: 20,
-    top: -10,
-  },
   // ⏳ Estado cargando modelo
   loadingContainer: {
     flex: 1,
@@ -184,7 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: COLORS.primary.dark,
   },
-  // ⏳ Estado mientras se captura la foto
+  // ⏳ Overlay mientras captura/procesa
   capturingOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.4)',
