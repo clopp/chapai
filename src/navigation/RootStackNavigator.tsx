@@ -5,7 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Camera, CameraPermissionStatus} from 'react-native-vision-camera';
 import PermissionScreen from '../screens/PermissionScreen';
-import CameraScreen from '../screens/CameraScreen';
+//import CameraScreen from '../screens/CameraScreen';
 import HomeScreen from '../screens/HomeScreen';
 import {Routes} from './Routes';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
