@@ -1,10 +1,6 @@
 // src/services/TFLiteService.ts
 import {Tflite} from 'react-native-tflite-classification';
-
-export interface ClassificationResult {
-  label: string;
-  confidence: number;
-}
+import {ClassificationResult} from '../types/tflite';
 
 class TFLiteService {
   private tflite: Tflite;
@@ -40,6 +36,8 @@ class TFLiteService {
             console.error('❌ Error clasificando imagen:', err);
             reject(err);
           } else if (res) {
+            console.log('resultados alsificacion', res);
+
             resolve(res);
           } else {
             reject(new Error('No se recibió resultado del modelo'));
