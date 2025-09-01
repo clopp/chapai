@@ -10,9 +10,10 @@ import ResultCard from '../components/ResultCard';
 import {LoadingBar} from '../components/LoadingBar';
 import {COLORS} from '../theme';
 
-export default function ScanScreen({navigation}: any) {
+export default function ScanScreen() {
   const {camera, device, permission} = useCameraHandler();
   const {isModelLoaded, result, classify} = useTFLite();
+
   const [photo, setPhoto] = useState<string>();
   const [isCapturing, setIsCapturing] = useState(false);
 
@@ -32,6 +33,7 @@ export default function ScanScreen({navigation}: any) {
       </View>
     );
   }
+
   // 📌 Captura de foto
   const takePhoto = async () => {
     if (!device || !camera.current) {
@@ -64,10 +66,7 @@ export default function ScanScreen({navigation}: any) {
         {photo && result ? (
           <>
             <Image source={{uri: photo}} style={styles.previewImage} />
-            <ResultCard
-              result={result}
-              onNavigate={() => navigation.navigate('Gota')}
-            />
+            <ResultCard result={result} onReset={() => setPhoto(undefined)} />
           </>
         ) : (
           <>
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
   },
   previewImage: {
     width: '80%',
-    height: '95%',
+    height: '70%',
     borderRadius: 10,
   },
   // ⏳ Estado cargando modelo
